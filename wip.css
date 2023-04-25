@@ -1,0 +1,82 @@
+:root {
+    --white-a1: rgba(255, 255, 255);
+    --white-a075: rgba(255, 255, 255, 0.75);
+    --white-a05: rgba(255, 255, 255, 0.5);
+    --white-a025: rgba(255, 255, 255, 0.25);
+    --grey-primary: rgb(141, 141, 141);
+    --grey-secondary: rgb(59, 59, 59);
+    --grey-tertiary: rgb(170, 170, 170);
+    --black-a05: rgba(0, 0, 0, 0.5);
+
+    --background-color: var(--grey-secondary);
+    --background-color-secondary: var(--grey-primary);
+    --shadow-color: var(--black-a05);
+}
+
+body {
+    background-color: var(--background-color);
+    color: rgba(255, 255, 255, 0.448);
+    
+}
+
+.navbar {
+    background-color: var(--background-color-secondary);
+    box-shadow: 0px 3px 5px var(--shadow-color)
+}
+
+.navbar__btn {
+    border: 0.1rem solid var(--white-a075);
+    color: var(--white-a075);
+    background-color: var(--white-a025);
+    font-size: 1.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+
+}
+.navbar__btn img {
+    max-width: 50%;
+    max-height: 50%;
+}
+
+.navbar__btn:hover {
+    color: var(--white-a1);
+    border-color: var(--white-a1);
+    background-color: var(--white-a05);
+}
+
+.column {
+    background-color: var(--white-a075)
+}
+
+.column__header{
+    background-color: var(--background-color-secondary);
+    margin-bottom: 1.5rem;
+    color: var(--white-a075);
+}
+
+.column__task-block {
+    background-color: var(--background-color-secondary);
+    margin: 1rem 0.5rem;
+    color: var(--white-a075);
+}
+
+.column__task-block__task-container {
+    padding-left: 0.5rem;
+}
+
+.column__task-block__checkbox-container {
+    background-color: var(--background-color);
+}
+
+.column__task-block__checkbox {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: 1.5rem 0.25rem 0.25rem 0.25rem;
+    
+}
+
+.column__task-block__checkbox:checked {
+    background-color: var(--grey-tertiary);
+    border-color: var(--white-a075);
+}
+

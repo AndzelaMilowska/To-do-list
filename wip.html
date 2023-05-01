@@ -22,9 +22,8 @@
 
     <nav class="navbar sticky-top mb-5 ">
     <!-- Button add column -->
-        <button class="btn navbar__btn p-0 mx-3 d-flex align-items-center justify-content-center rounded-circle "
-        data-bs-toggle="modal" data-bs-target="#exampleModal"><img class=""
-                src="./Sources/CUSTOM_plusSign.png"></button>
+        <button id="btn__add_column" class="btn btn__add_column navbar__btn p-0 mx-3 d-flex align-items-center justify-content-center rounded-circle ">
+        <img class="" src="./Sources/CUSTOM_plusSign.png"></button>
     <!-- Button add column end -->
     </nav>
   
@@ -46,9 +45,9 @@
       </div>
     </div>
   </div>
-
+  <!-- Modal end -->
     <div class="container">
-        <div class="row justify-content-center">
+        <div id="columnContainer" class="row justify-content-center">
             <!--col 01-->
             <div class="col-3 p-0 m-3 column rounded overflow-hidden position-relative">
               <input type="text" id="column__header" class="column__header d-flex justify-content-center" placeholder="Column">

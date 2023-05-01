@@ -7,51 +7,67 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link rel="stylesheet" href="wip.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@200;300;400;700&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         crossorigin="anonymous"></script>
+    
+        
 
-    <nav class="navbar sticky-top rounded-bottom mb-5 ">
-
-        <button class="btn navbar__btn p-0 mx-3 d-flex align-items-center justify-content-center rounded-circle" type="button"><img class="" src="./Sources/CUSTOM_plusSign.png"></button>
+    <nav class="navbar sticky-top mb-5 ">
+    <!-- Button add column -->
+        <button class="btn navbar__btn p-0 mx-3 d-flex align-items-center justify-content-center rounded-circle "
+        data-bs-toggle="modal" data-bs-target="#exampleModal"><img class=""
+                src="./Sources/CUSTOM_plusSign.png"></button>
+    <!-- Button add column end -->
     </nav>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-2 p-0 m-3 column rounded overflow-hidden">
-                <h2 class="column__header d-flex justify-content-center">Column 01</h2>
-
-                <div class="column__task-block d-flex flex-row rounded overflow-hidden">
-                    <div class=column__task-block__checkbox-container>
-                        <input class="column__task-block__checkbox form-check-input rounded-circle" type="checkbox"
-                            value="" id="flexCheckDefault">
-                    </div>
-                    <div class="column__task-block__task-container">
-                        <h4 class=column__task-block__header>Task</h4>
-                        <p class=column__task-block__content>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                        </p>
-                    </div>
+            <!--col 01-->
+            <div class="col-3 p-0 m-3 column rounded overflow-hidden position-relative">
+                <h2 id="column__header" class="column__header d-flex justify-content-center" contentEditable="true">collumn 01</h2>
+                <button class="btn column__btn p-0 m-0 d-flex align-items-center justify-content-center rounded-circle position-absolute"
+                data-bs-toggle="modal" data-bs-target="#exampleModal"><img class=""
+                        src="./Sources/CUSTOM_plusSign.png">
+                </button>
+                <div class="column__task-card p-2 d-flex flex-column rounded overflow-hidden">
+                    <h4 class="column__task-card__header">Task</h4>
+                    <p class="column__task-card__content">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
                 </div>
-
-                <div class="column__task-block d-flex flex-row rounded overflow-hidden">
-                    <div class=column__task-block__checkbox-container>
-                        <input class="column__task-block__checkbox form-check-input rounded-circle" type="checkbox"
-                            value="" id="flexCheckDefault">
-                    </div>
-                    <div class="column__task-block__task-container">
-                        <h4 class=column__task-block__header>Task</h4>
-                        <p class=column__task-block__content>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                    </div>
-                </div>
-
             </div>
+            <!--col 01 end-->
+            
         </div>
 
 
-
+        <script src="./wip.js"></script>
 </body>
 
 </html>

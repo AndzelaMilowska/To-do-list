@@ -2,33 +2,68 @@ const columnHeader = document.getElementById("column__header");
 const rootEl = document.querySelector(':root');
 const columnsContainer = document.getElementById("columnContainer")
 const btnAddColumn = document.getElementById("btn__add_column")
+const serverURL = `https://todosy.iwanicki.wtf/api/v1/todo-columns`
+
 
 
 //set column names
 function setColumnNames() {
-    if (localStorage.getItem ('column__header')) {
-        columnHeader.value = localStorage.getItem ('column__header')
+    if (localStorage.getItem('column__header')) {
+        columnHeader.value = localStorage.getItem('column__header')
     }
 }
 
 setColumnNames()
 
-columnHeader.addEventListener('click', () => { 
-    columnHeader.addEventListener("focusout", () => {localStorage.setItem('column__header', columnHeader.value)})
+columnHeader.addEventListener('click', () => {
+    columnHeader.addEventListener("focusout", () => { localStorage.setItem('column__header', columnHeader.value) })
     setColumnNames()
-    
+
 })
 
-
 //post column
-function addColumnToServer() {
-    const formData = new FormData();
-    formData.append("name", "testColumn02")
-    const request = new XMLHttpRequest();
-    request.open("POST", "http://146.59.126.16:4999/api/v1/todo-columns");
-    request.send(formData);
+// const request = new XMLHttpRequest();
+// function addColumnToServer() {
+//     const formData = new FormData();
+//     formData.append("name", "Column03")
+//     request.open("POST", serverURL);
+//     request.send(formData);
+// }
+
+//new post
+const formData = new FormData();
+formData.append("name", "Column01")
+async function postColumn() {
+    const response = await fetch(serverURL, {
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      body: formData
+    });
+  }
+  
+//get columns
+async function getColumnList() {
+    const response = await fetch(serverURL, {
+        method: "GET"
+    });
+    const columnsAll = await response.json()
+    return columnsAll
+    //console.log(columnsAll)
+
 }
 
+
+// remove all columns
+async function removeAllColumns() {
+    const allColumns = await getColumnList();
+
+    const promises = allColumns.map(column => fetch(`${serverURL}/${column.uuid}`, {
+        method: "DELETE"
+    }))
+
+    await Promise.all(promises);
+}
+
+//removeAllColumns();
 
 //button create column on click
 function createNewColumn() {
@@ -39,8 +74,8 @@ function createNewColumn() {
               src="./Sources/CUSTOM_plusSign.png">
       </button>
   </div>`
-    }
+}
 //
-btnAddColumn.addEventListener('click', () => {createNewColumn(); addColumnToServer()})
+btnAddColumn.addEventListener('click', () => { createNewColumn(); /* postColumn(); addColumnToServer();*/ getColumnList() })
 
 

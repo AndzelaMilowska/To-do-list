@@ -3,11 +3,12 @@
 //pobierz z serwera istniejące taski
 //wygeneruj taski po id kolumny
 
-const serverURL = `https://todosy.iwanicki.wtf/api/v1/todo-columns/`
+const serverColumns = `https://todosy.iwanicki.wtf/api/v1/todo-columns/`
+const serverCards = `https://todosy.iwanicki.wtf/api/v1/todo-item/`
 const columnsContainer = document.getElementById("columnContainer")
 
 async function getColumnsObj() {
-    const response = await fetch(serverURL, {
+    const response = await fetch(serverColumns, {
         method: "GET"
     });
     const columnsAll = await response.json()
@@ -34,18 +35,46 @@ async function generateColumns() {
         generateColumnHTML(index, column.name, column.uuid);
     })
 }
+// get cards from server for desired column -> generate cards -> repeat for all columns
+//get cards object from server
+async function getCardsObj(colId) {
+    const response = await fetch(serverCards+colId, {
+        method: "GET"
+    });
+    const cardsAll = await response.json()
+    return cardsAll
+    // console.log(cardsAll)
+}
 
 //generate task html
- function generateTaskHTML() {
-    
- }
+function generateTaskHTML(columnId, name, desctiption) {
+    columnId.insertAdjacentHTML('beforeend', `
+    <div class="column__task-card p-2 d-flex flex-column rounded overflow-hidden">
+        <h4 class="column__task-card__header">${name}</h4>
+        <p class="column__task-card__content">${desctiption}
+        </p>
+        </div>
+    </div>`)
+}
 
+//generate cards
+function generateCards() {
+    const columnsList = document.querySelectorAll(".column")
+    columnsList.forEach(async (column) => {
+        const cardsObj = await getCardsObj(column.dataset.column)
+        console.log(cardsObj)
+        cardsObj.map((card) => {
+            generateTaskHTML(column, card.name, card.description);
+        })
+    })
+}
+//
 //generate tasks from server
 
 
 //put column name
 async function sendColumnName(name, uuid) {
-    await fetch(serverURL+uuid, {
+    await fetch(serverColumns+uuid, {
         method: "PUT",
         body: name
     })
@@ -71,6 +100,7 @@ async function lookForColumnNameChange() {
 async function renderPage() {
     await generateColumns();
     lookForColumnNameChange();
+    generateCards()
 }
 renderPage()
 

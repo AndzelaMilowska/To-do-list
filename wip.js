@@ -7,7 +7,7 @@ const serverURL = `https://todosy.iwanicki.wtf/api/v1/todo-columns`
 
 //get columns
 async function getColumnList() {
-    const response = await fetch(serverURL, {
+    const response = await fetch(serverColumns, {
         method: "GET"
     });
     const columnsAll = await response.json()
@@ -62,7 +62,7 @@ btnAddColumn.addEventListener('click', () => { createNewColumn();
 const formData = new FormData();
 formData.append("name", "Column01")
 async function postColumn() {
-    const response = await fetch(serverURL, {
+    const response = await fetch(serverColumns, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       body: formData
     });
@@ -73,7 +73,7 @@ async function postColumn() {
 async function removeAllColumns() {
     const allColumns = await getColumnList();
 
-    const promises = allColumns.map(column => fetch(`${serverURL}/${column.uuid}`, {
+    const promises = allColumns.map(column => fetch(`${serverColumns}/${column.uuid}`, {
         method: "DELETE"
     }))
 

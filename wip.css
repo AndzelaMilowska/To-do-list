@@ -69,6 +69,10 @@ body {
     text-decoration: underline dotted;
 }
 
+.column__header::placeholder {
+    color: var(--white-a1);
+}
+
 .column__task-card {
     margin: 1rem 0.5rem;
     color: var(--text-primary-color);

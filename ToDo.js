@@ -96,7 +96,7 @@ async function lookForColumnNameChange() {
     // console.log(columnHeaders)
 }
 
-//delete column button ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//delete column button
 async function deleteColumn(columnId) {
     await fetch(serverColumns+columnId, {
         method: "DELETE",
@@ -111,20 +111,6 @@ async function deleteColumnBtn() {
     }))
 }
 
-
-//MAKE ADD COLUMN BUTTON WORK!!
-// button clikc -> get serv column info -> sent post -> get new serv info -> compare -> asign missing id to new column
-//pick newest date
-// async function picknNewestDate() {
-//     const columnsObj = await getColumnsObj()
-//     let dateAr = []
-//     // console.log(columnsObj)
-//     columnsObj.map((column) => dateAr.push(column.createdAt))
-//     console.log(dateAr)
-//     let newest = new Date(Math.max(dateAr.map(e => new Date(e.MeasureDate))));
-//     console.log(newest)
-// }
-
 async function postNewColumn() {
     const defaultColumn = new FormData()
     defaultColumn.append("name", "Column")
@@ -133,14 +119,22 @@ async function postNewColumn() {
         body: defaultColumn
     })
 }
-//teraz zrób najpierw delete button -> delete na dole kolumny, mało widoczny napis
+//get new col id
 async function getNewColumnId() {
     const oldColumnsObj = await getColumnsObj()
     await postNewColumn()
     const newColumnsObj = await getColumnsObj()
-    console.log(oldColumnsObj)
-    console.log(newColumnsObj)
-}
+    // console.log(oldColumnsObj)
+    // console.log(newColumnsObj)
+    let oldColumnsArr = []
+    let newColArr =[]
+    oldColumnsObj.forEach(column => oldColumnsArr.push(column.uuid))
+    newColumnsObj.forEach(column => newColArr.push(column.uuid))
+    let difference = newColArr.filter(x => !oldColumnsArr.includes(x));
+    //console.log(difference)
+    generateColumnHTML(newColArr.length - 1, "Column", difference);
+    //delete is not working on new column before page refresg -> reload deleteColumnBtn after every  new col? (btn is not in delBtn array)
+    }
 
 function lookForAddColBtnUse() {
     buttonNewColumn.addEventListener("click", getNewColumnId)
@@ -151,7 +145,7 @@ async function renderPage() {
     await generateColumns();
     lookForColumnNameChange();
     generateCards()
-    deleteColumnBtn()
     lookForAddColBtnUse()
+    deleteColumnBtn()
 }
 renderPage()

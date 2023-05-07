@@ -33,6 +33,9 @@ function generateColumnHTML(colIndex, colName, colID) {
 
 //generate columns from server
 async function generateColumns() {
+    columnsContainer.innerHTML = ""
+    // const columnsList = document.querySelectorAll(".column")
+    // columnsList.forEach(column => column.remove())
     const columnsObj = await getColumnsObj()
     // console.log(columnsObj)
     columnsObj.map((column, index) => {
@@ -119,25 +122,36 @@ async function postNewColumn() {
         body: defaultColumn
     })
 }
-//get new col id
-async function getNewColumnId() {
-    const oldColumnsObj = await getColumnsObj()
-    await postNewColumn()
-    const newColumnsObj = await getColumnsObj()
-    // console.log(oldColumnsObj)
-    // console.log(newColumnsObj)
-    let oldColumnsArr = []
-    let newColArr =[]
-    oldColumnsObj.forEach(column => oldColumnsArr.push(column.uuid))
-    newColumnsObj.forEach(column => newColArr.push(column.uuid))
-    let difference = newColArr.filter(x => !oldColumnsArr.includes(x));
-    //console.log(difference)
-    generateColumnHTML(newColArr.length - 1, "Column", difference);
-    //delete is not working on new column before page refresg -> reload deleteColumnBtn after every  new col? (btn is not in delBtn array)
-    }
+// //get new col id
+// async function getNewColumnId() {
+//     const oldColumnsObj = await getColumnsObj()
+//     await postNewColumn()
+//     const newColumnsObj = await getColumnsObj()
+//     // console.log(oldColumnsObj)
+//     // console.log(newColumnsObj)
+//     let oldColumnsArr = []
+//     let newColArr =[]
+//     oldColumnsObj.forEach(column => oldColumnsArr.push(column.uuid))
+//     newColumnsObj.forEach(column => newColArr.push(column.uuid))
+//     let difference = newColArr.filter(x => !oldColumnsArr.includes(x));
+//     //console.log(difference)
+//     generateColumnHTML(newColArr.length - 1, "Column", difference);
+//     //delete is not working on new column before page refresg -> reload deleteColumnBtn after every  new col? (btn is not in delBtn array)
+//     }
+
+async function rerenderPage() {
+    await generateColumns();
+    lookForColumnNameChange();
+    generateCards()
+    deleteColumnBtn()
+}
 
 function lookForAddColBtnUse() {
-    buttonNewColumn.addEventListener("click", getNewColumnId)
+    //buttonNewColumn.addEventListener("click", getNewColumnId)
+    buttonNewColumn.addEventListener("click",async () => {
+        await postNewColumn()
+        rerenderPage()
+    })
 }
 
 //render Page

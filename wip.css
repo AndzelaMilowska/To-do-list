@@ -109,9 +109,32 @@ body {
     color: var(--column-primary-color);
     font-size: 0.75rem;
     bottom: -0rem; right: 0.75rem;
-
 }
 
 .column__delete-btn:hover {
     color: var(--column-tertiary-color);
+}
+
+.modal__btn-cancel {
+    border: 0.1rem solid var(--background-color);
+    color: var(--column-primary-color);
+    margin: 1rem 0;
+}
+
+.modal__btn-save {
+    background-color: var(--column-primary-color);
+    color: var(--white-a1);
+    margin: 1rem;
+}
+
+.card-form {
+    padding: 1rem;
+    color: var(--column-primary-color);
+    font-size: 1.5rem;
+}
+
+.card-modal__btn:hover {
+background-color: var(--column-tertiary-color);
+color: var(--white-a1);
+border: 0.1rem solid var(--column-primary-color);
 }

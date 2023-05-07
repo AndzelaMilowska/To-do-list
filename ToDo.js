@@ -21,7 +21,7 @@ function generateColumnHTML(colIndex, colName, colID) {
     columnsContainer.insertAdjacentHTML('beforeend', `<div id="col_${colIndex}" data-column="${colID}" class="col-3 m-3 column rounded overflow-hidden position-relative">
     <input type="text" value="${colName}" class="column__header d-flex justify-content-center" placeholder="Column">
       <button class="btn column__btn p-0 m-0 d-flex align-items-center justify-content-center rounded-circle position-absolute"
-      data-bs-toggle="modal" data-bs-target="#exampleModal"><img class=""
+      data-bs-toggle="modal" data-bs-target="#cardModal"><img class=""
               src="./Sources/CUSTOM_plusSign.png">
       </button>
       </button>
@@ -122,22 +122,6 @@ async function postNewColumn() {
         body: defaultColumn
     })
 }
-// //get new col id
-// async function getNewColumnId() {
-//     const oldColumnsObj = await getColumnsObj()
-//     await postNewColumn()
-//     const newColumnsObj = await getColumnsObj()
-//     // console.log(oldColumnsObj)
-//     // console.log(newColumnsObj)
-//     let oldColumnsArr = []
-//     let newColArr =[]
-//     oldColumnsObj.forEach(column => oldColumnsArr.push(column.uuid))
-//     newColumnsObj.forEach(column => newColArr.push(column.uuid))
-//     let difference = newColArr.filter(x => !oldColumnsArr.includes(x));
-//     //console.log(difference)
-//     generateColumnHTML(newColArr.length - 1, "Column", difference);
-//     //delete is not working on new column before page refresg -> reload deleteColumnBtn after every  new col? (btn is not in delBtn array)
-//     }
 
 async function rerenderPage() {
     await generateColumns();
@@ -147,11 +131,41 @@ async function rerenderPage() {
 }
 
 function lookForAddColBtnUse() {
-    //buttonNewColumn.addEventListener("click", getNewColumnId)
     buttonNewColumn.addEventListener("click",async () => {
         await postNewColumn()
         rerenderPage()
     })
+}
+
+//add new task card (request)
+async function saveCard(parentId) {
+    const saveCardBtn = await document.querySelector(".modal__btn-save")
+    saveCardBtn.addEventListener('click', async () => {
+        const taskTitle = document.querySelector(".card-title")
+        const taskDescription = document.querySelector(".card-description")
+        const cardData = new FormData()
+        cardData.append("name", taskTitle.value)
+        cardData.append("description", taskDescription.value)
+        taskTitle.value = '';
+        taskDescription.value = '';
+        await fetch(serverCards+parentId, {
+            method: "POST",
+            body: cardData
+        })
+        rerenderPage()
+    })
+}
+
+// is post card gonna work with put instead?
+// make del card (new modal? or btn visible or not depends of click area)
+
+//add new task card (listener)
+async function addTaskBtnUse() {
+    const addCardBtn = await document.querySelectorAll(".column__btn") 
+    addCardBtn.forEach(button => button.addEventListener('click', () => {
+        const columnId = button.parentNode.dataset.column;
+        saveCard(columnId)
+        }))
 }
 
 //render Page
@@ -161,5 +175,6 @@ async function renderPage() {
     generateCards()
     lookForAddColBtnUse()
     deleteColumnBtn()
+    addTaskBtnUse()
 }
 renderPage()

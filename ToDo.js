@@ -55,7 +55,7 @@ async function getCardsObj(colId) {
 //generate task html
 function generateTaskHTML(columnId, name, desctiption) {
     columnId.insertAdjacentHTML('beforeend', `
-    <div class="column__task-card p-2 d-flex flex-column rounded overflow-hidden">
+    <div class="column__task-card p-2 d-flex flex-column rounded overflow-hidden" data-bs-toggle="modal" data-bs-target="#cardModal">
         <h4 class="column__task-card__header">${name}</h4>
         <p class="column__task-card__content">${desctiption}
         </p>
@@ -64,7 +64,7 @@ function generateTaskHTML(columnId, name, desctiption) {
 }
 
 //generate cards
-function generateCards() {
+async function generateCards() {
     const columnsList = document.querySelectorAll(".column")
     columnsList.forEach(async (column) => {
         const cardsObj = await getCardsObj(column.dataset.column)
@@ -125,8 +125,8 @@ async function postNewColumn() {
 
 async function rerenderPage() {
     await generateColumns();
+    await generateCards();
     lookForColumnNameChange();
-    generateCards()
     deleteColumnBtn()
 }
 
@@ -156,7 +156,26 @@ async function saveCard(parentId) {
     })
 }
 
-// is post card gonna work with put instead?
+//update/ midify card 
+// async function modifyCard(parentId) {
+//     const saveCardBtn = await document.querySelector(".modal__btn-save")
+//     saveCardBtn.addEventListener('click', async () => {
+//         const taskTitle = document.querySelector(".card-title")
+//         const taskDescription = document.querySelector(".card-description")
+//         const cardData = new FormData()
+//         cardData.append("name", taskTitle.value)
+//         cardData.append("description", taskDescription.value)
+//         taskTitle.value = '';
+//         taskDescription.value = '';
+//         await fetch(serverCards+parentId, {
+//             method: "POST",
+//             body: cardData
+//         })
+//         rerenderPage()
+//     })
+// }
+
+// is post card gonna work with put instead? --> nope but post is on + btn event listener -> make same with put for csrd listener
 // make del card (new modal? or btn visible or not depends of click area)
 
 //add new task card (listener)
@@ -168,13 +187,36 @@ async function addTaskBtnUse() {
         }))
 }
 
+async function editTaskCard() {
+    const taskCard = document.querySelectorAll(".column__task-card") 
+    console.log(taskCard)
+    taskCard.forEach(card => card.addEventListener('click', () => {
+        console.log(taskCard)
+        const colID = card.parentNode.dataset.column;
+        console.log(colID)
+        }))
+}
+
+//del btn task
+async function deleteColumnBtn() {
+    const deleteButtons =  document.querySelectorAll(".column__delete-btn") 
+    console.log(deleteButtons)
+    deleteButtons.forEach(button => button.addEventListener('click', () => {
+            deleteColumn(button.parentNode.dataset.column)
+            button.parentNode.remove();
+    }))
+}
+
 //render Page
 async function renderPage() {
     await generateColumns();
+    await generateCards().then(editTaskCard)
     lookForColumnNameChange();
-    generateCards()
     lookForAddColBtnUse()
     deleteColumnBtn()
     addTaskBtnUse()
+    // setTimeout(editTaskCard, 1000)
+    
+    
 }
 renderPage()

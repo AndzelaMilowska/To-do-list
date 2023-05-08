@@ -7,6 +7,7 @@
     --grey-secondary: rgb(59, 59, 59);
     --grey-tertiary: rgb(170, 170, 170);
     --black-a05: rgba(0, 0, 0, 0.5);
+    --red-primary: rgb(193, 77, 77);
     
 
     --background-color:  #d5cdca;
@@ -127,6 +128,14 @@ body {
     margin: 1rem;
 }
 
+.modal__btn-delete {
+    border: 0.1rem solid var(--red-primary);
+    color: var(--red-primary);
+    background-color: var(--white-a1);
+    margin: 1rem 0;
+    left: 1.5rem;
+}
+
 .card-form {
     padding: 1rem;
     color: var(--column-primary-color);
@@ -137,4 +146,9 @@ body {
 background-color: var(--column-tertiary-color);
 color: var(--white-a1);
 border: 0.1rem solid var(--column-primary-color);
+}
+
+.modal__btn-delete:hover {
+    color: var(--white-a1);
+    background-color: var(--red-primary);
 }

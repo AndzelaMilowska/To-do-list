@@ -53,9 +53,9 @@ async function getCardsObj(colId) {
 }
 
 //generate task html
-function generateTaskHTML(columnId, name, desctiption) {
+function generateTaskHTML(columnId, name, desctiption, cardId) {
     columnId.insertAdjacentHTML('beforeend', `
-    <div class="column__task-card p-2 d-flex flex-column rounded overflow-hidden" data-bs-toggle="modal" data-bs-target="#cardModal">
+    <div class="column__task-card p-2 d-flex flex-column rounded overflow-hidden" data-card-Id="${cardId}" data-bs-toggle="modal" data-bs-target="#cardModal">
         <h4 class="column__task-card__header">${name}</h4>
         <p class="column__task-card__content">${desctiption}
         </p>
@@ -66,13 +66,12 @@ function generateTaskHTML(columnId, name, desctiption) {
 //generate cards
 async function generateCards() {
     const columnsList = document.querySelectorAll(".column")
-    columnsList.forEach(async (column) => {
+    await Promise.all(Array.from(columnsList).map(async (column) => {
         const cardsObj = await getCardsObj(column.dataset.column)
-        // console.log(cardsObj)
-        cardsObj.map((card) => {
-            generateTaskHTML(column, card.name, card.description);
-        })
-    })
+        await Promise.all(Array.from(cardsObj).map((card) => {
+            generateTaskHTML(column, card.name, card.description, card.uuid);
+        }))
+    }))
 }
 
 //put column name
@@ -84,19 +83,15 @@ async function sendColumnName(name, uuid) {
 }
 
 // look for column name change
-async function lookForColumnNameChange() {
+function lookForColumnNameChange() {
     const columnHeaders =  document.querySelectorAll(".column__header") 
     columnHeaders.forEach(header => header.addEventListener('focus', () => {
         header.addEventListener('focusout', () => {
-            // console.log(`${header.value}`)
-            // console.log(header.parentNode.dataset.column)
             const newColumnName = new FormData();
             newColumnName.append("name", header.value)
             sendColumnName(newColumnName, header.parentNode.dataset.column)
-
         })
     }))
-    // console.log(columnHeaders)
 }
 
 //delete column button
@@ -106,7 +101,7 @@ async function deleteColumn(columnId) {
     })
 }
 
-async function deleteColumnBtn() {
+function deleteColumnBtn() {
     const deleteButtons =  document.querySelectorAll(".column__delete-btn") 
     deleteButtons.forEach(button => button.addEventListener('click', () => {
             deleteColumn(button.parentNode.dataset.column)
@@ -139,7 +134,7 @@ function lookForAddColBtnUse() {
 
 //add new task card (request)
 async function saveCard(parentId) {
-    const saveCardBtn = await document.querySelector(".modal__btn-save")
+    const saveCardBtn = document.querySelector(".modal__btn-save")
     saveCardBtn.addEventListener('click', async () => {
         const taskTitle = document.querySelector(".card-title")
         const taskDescription = document.querySelector(".card-description")
@@ -156,67 +151,71 @@ async function saveCard(parentId) {
     })
 }
 
-//update/ midify card 
-// async function modifyCard(parentId) {
-//     const saveCardBtn = await document.querySelector(".modal__btn-save")
-//     saveCardBtn.addEventListener('click', async () => {
-//         const taskTitle = document.querySelector(".card-title")
-//         const taskDescription = document.querySelector(".card-description")
-//         const cardData = new FormData()
-//         cardData.append("name", taskTitle.value)
-//         cardData.append("description", taskDescription.value)
-//         taskTitle.value = '';
-//         taskDescription.value = '';
-//         await fetch(serverCards+parentId, {
-//             method: "POST",
-//             body: cardData
-//         })
-//         rerenderPage()
-//     })
-// }
-
 // is post card gonna work with put instead? --> nope but post is on + btn event listener -> make same with put for csrd listener
 // make del card (new modal? or btn visible or not depends of click area)
 
 //add new task card (listener)
-async function addTaskBtnUse() {
-    const addCardBtn = await document.querySelectorAll(".column__btn") 
+function addTaskBtnUse() {
+    const addCardBtn = document.querySelectorAll(".column__btn") 
     addCardBtn.forEach(button => button.addEventListener('click', () => {
         const columnId = button.parentNode.dataset.column;
         saveCard(columnId)
         }))
 }
 
-async function editTaskCard() {
-    const taskCard = document.querySelectorAll(".column__task-card") 
-    console.log(taskCard)
+// //update/ midify card 
+function putCard(cardId, colId) {
+    const saveCardBtn = document.querySelector(".modal__btn-save")
+    saveCardBtn.addEventListener('click', async () => {
+        const taskTitle = document.querySelector(".card-title")
+        const taskDescription = document.querySelector(".card-description")
+        const modifiedCardData = new FormData()
+        modifiedCardData.append("name", taskTitle.value)
+        modifiedCardData.append("description", taskDescription.value)
+        modifiedCardData.append("TodoColumnUuid", colId)
+        taskTitle.value = '';
+        taskDescription.value = '';
+        await fetch(serverCards+cardId, {
+            method: "PUT",
+            body: modifiedCardData
+        })
+        rerenderPage()
+    })
+}
+
+function editTaskCard() {
+    const taskCard = document.querySelectorAll(".column__task-card")
     taskCard.forEach(card => card.addEventListener('click', () => {
-        console.log(taskCard)
-        const colID = card.parentNode.dataset.column;
-        console.log(colID)
-        }))
+        const taskTitle = document.querySelector(".card-title")
+        const taskDescription = document.querySelector(".card-description")
+        taskTitle.value = card.childNodes[1].innerHTML
+        taskDescription.value = card.childNodes[3].innerHTML
+        const colId = card.parentNode.dataset.column;
+        const cardId = card.dataset.cardId
+        putCard(cardId, colId)
+        //console.log(card.dataset.cardId)
+    }))
 }
 
 //del btn task
-async function deleteColumnBtn() {
-    const deleteButtons =  document.querySelectorAll(".column__delete-btn") 
-    console.log(deleteButtons)
-    deleteButtons.forEach(button => button.addEventListener('click', () => {
-            deleteColumn(button.parentNode.dataset.column)
-            button.parentNode.remove();
-    }))
-}
+// async function deleteColumnBtn() {
+//     const deleteButtons =  document.querySelectorAll(".column__delete-btn") 
+//     console.log(deleteButtons)
+//     deleteButtons.forEach(button => button.addEventListener('click', () => {
+//             deleteColumn(button.parentNode.dataset.column)
+//             button.parentNode.remove();
+//     }))
+// }
 
 //render Page
 async function renderPage() {
     await generateColumns();
-    await generateCards().then(editTaskCard)
+    await generateCards()
     lookForColumnNameChange();
     lookForAddColBtnUse()
     deleteColumnBtn()
     addTaskBtnUse()
-    // setTimeout(editTaskCard, 1000)
-    
-    
+    //setTimeout(editTaskCard, 500)  
+    await editTaskCard()
 }
 renderPage()

@@ -123,6 +123,8 @@ async function rerenderPage() {
     await generateCards();
     lookForColumnNameChange();
     deleteColumnBtn()
+    addTaskBtnUse()
+    editTaskCard()
 }
 
 function lookForAddColBtnUse() {
@@ -182,10 +184,25 @@ function putCard(cardId, colId) {
         rerenderPage()
     })
 }
+async function deleteCard(cardId) {
+    await fetch(serverCards+cardId, {
+        method: "DELETE",
+    })
+}
+
+// del btn task
+function deleteCardBtn(cardId) {
+    const deleteButton = document.querySelector(".modal__btn-delete")
+    deleteButton.addEventListener('click', () => {
+        deleteCard(cardId)
+        rerenderPage()
+    })
+}
 
 function editTaskCard() {
     const taskCard = document.querySelectorAll(".column__task-card")
     taskCard.forEach(card => card.addEventListener('click', () => {
+        deleteCardBtn(card.dataset.cardId)
         const taskTitle = document.querySelector(".card-title")
         const taskDescription = document.querySelector(".card-description")
         taskTitle.value = card.childNodes[1].innerHTML
@@ -197,25 +214,14 @@ function editTaskCard() {
     }))
 }
 
-//del btn task
-// async function deleteColumnBtn() {
-//     const deleteButtons =  document.querySelectorAll(".column__delete-btn") 
-//     console.log(deleteButtons)
-//     deleteButtons.forEach(button => button.addEventListener('click', () => {
-//             deleteColumn(button.parentNode.dataset.column)
-//             button.parentNode.remove();
-//     }))
-// }
-
 //render Page
 async function renderPage() {
     await generateColumns();
     await generateCards()
     lookForColumnNameChange();
     lookForAddColBtnUse()
-    deleteColumnBtn()
     addTaskBtnUse()
-    //setTimeout(editTaskCard, 500)  
-    await editTaskCard()
+    deleteColumnBtn()
+    editTaskCard()
 }
 renderPage()

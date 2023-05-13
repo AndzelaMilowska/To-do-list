@@ -15,6 +15,9 @@
     --shadow-color: #d5cdca;
 
 
+    --display-del-btn: block;
+    --pointer-events: auto;
+    --draged-border: none;
 
     --column-secondary-color: #033F42;
     --column-tertiary-color: #80A8AB;
@@ -134,6 +137,7 @@ body {
     background-color: var(--white-a1);
     margin: 1rem 0;
     left: 1.5rem;
+    display: var(--display-del-btn);
 }
 
 .card-form {
@@ -151,4 +155,12 @@ border: 0.1rem solid var(--column-primary-color);
 .modal__btn-delete:hover {
     color: var(--white-a1);
     background-color: var(--red-primary);
+}
+
+.column_content {
+    pointer-events: var(--pointer-events);
+}
+
+#indrag {
+border: var(--draged-border);
 }

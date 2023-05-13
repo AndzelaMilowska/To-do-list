@@ -7,6 +7,7 @@ const serverColumns = `https://todosy.iwanicki.wtf/api/v1/todo-columns/`
 const serverCards = `https://todosy.iwanicki.wtf/api/v1/todo-item/`
 const columnsContainer = document.getElementById("columnContainer")
 const buttonNewColumn = document.getElementById("btn__add_column")
+const rootEl = document.querySelector(":root")
 
 async function getColumnsObj() {
     const response = await fetch(serverColumns, {
@@ -153,13 +154,17 @@ async function saveCard(parentId) {
     })
 }
 
-// is post card gonna work with put instead? --> nope but post is on + btn event listener -> make same with put for csrd listener
-// make del card (new modal? or btn visible or not depends of click area)
-
 //add new task card (listener)
 function addTaskBtnUse() {
     const addCardBtn = document.querySelectorAll(".column__btn") 
     addCardBtn.forEach(button => button.addEventListener('click', () => {
+        rootEl.style.setProperty('--display-del-btn', 'none');
+        //taskTitle & taskDescription should be avalible for both, addTaskBtnUse & saveCard functions
+        // cool if you could share them also with putCard & editTaskCard functions
+        const taskTitle = document.querySelector(".card-title")
+        const taskDescription = document.querySelector(".card-description")
+        taskTitle.value = '';
+        taskDescription.value = '';
         const columnId = button.parentNode.dataset.column;
         saveCard(columnId)
         }))
@@ -202,6 +207,7 @@ function deleteCardBtn(cardId) {
 function editTaskCard() {
     const taskCard = document.querySelectorAll(".column__task-card")
     taskCard.forEach(card => card.addEventListener('click', () => {
+        rootEl.style.setProperty('--display-del-btn', 'block');
         deleteCardBtn(card.dataset.cardId)
         const taskTitle = document.querySelector(".card-title")
         const taskDescription = document.querySelector(".card-description")

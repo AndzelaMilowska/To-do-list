@@ -2,112 +2,59 @@
 <html lang="en">
 
 <head>
-    <title>To Do </title>
-    <meta name="To do list" content="Dynamic to do list">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <link rel="stylesheet" href="wip.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@200;300;400;700&display=swap"
-        rel="stylesheet">
+  <title>To Do </title>
+  <meta name="To do list" content="Dynamic to do list">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <link rel="stylesheet" href="wip.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@200;300;400;700&display=swap"
+    rel="stylesheet">
 </head>
 
 <body>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
-        crossorigin="anonymous"></script>
-    
-        
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
 
-    <nav class="navbar sticky-top mb-5 ">
+
+
+  <nav class="navbar sticky-top mb-5 ">
     <!-- Button add column -->
-        <button id="btn__add_column" class="btn btn__add_column navbar__btn p-0 mx-3 d-flex align-items-center justify-content-center rounded-circle ">
-        <img class="" src="./Sources/CUSTOM_plusSign.png"></button>
+    <button id="btn__add_column"
+      class="btn btn__add_column navbar__btn p-0 mx-3 d-flex align-items-center justify-content-center rounded-circle ">
+      <img class="" src="./Sources/CUSTOM_plusSign.png"></button>
     <!-- Button add column end -->
-    </nav>
+  </nav>
 
-    
   <!-- Modal -->
-  <!-- <div class="modal fade show" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-modal="true"
-    role="dialog" style="display: block;"> -->
-    <div class="modal fade" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <form class = "card-form">
-            <div class="form-group py-3">
-              <label  for="taskTitle">Title</label>
-              <input type="text" class="form-control card-title" id="taskTitle" placeholder="Task title">
-            </div>
-            <div class="form-group">
-              <label for="taskDescription">Description</label>
-              <input type="text" class="form-control card-desctiprion" id="taskDescription" placeholder="Task description">
-            </div>
-          </form>
-          <div class="card-modal__footer d-flex justify-content-end">
-            <button type="button" class="btn modal__btn-cancel card-modal__btn" data-bs-dismiss="modal">cancel</button>
-            <button type="button" class="btn modal__btn-save card-modal__btn" data-bs-dismiss="modal">save</button>
+  <div class="modal fade" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form class="card-form">
+          <div class="form-group py-3">
+            <label for="taskTitle">Title</label>
+            <input type="text" class="form-control card-title" id="taskTitle" placeholder="Task title">
           </div>
+          <div class="form-group">
+            <label for="taskDescription">Description</label>
+            <input type="text" class="form-control card-description" id="taskDescription"
+              placeholder="Task description">
+          </div>
+        </form>
+        <div class="card-modal__footer d-flex justify-content-end">
+          <button type="button" class="btn modal__btn-delete position-absolute" data-bs-dismiss="modal">delete</button>
+          <button type="button" class="btn modal__btn-cancel card-modal__btn" data-bs-dismiss="modal">cancel</button>
+          <button type="button" class="btn modal__btn-save card-modal__btn" data-bs-dismiss="modal">save</button>
         </div>
       </div>
     </div>
-  <!-- Modal end -->
-
-
-  <!-- edit card modal -->
-  <!-- <div class="modal fade show" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-modal="true"
-    role="dialog" style="display: block;"> -->
-    <div class="modal fade" id="editCardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <form class = "card-form">
-            <div class="form-group py-3">
-              <label  for="taskTitle">Title</label>
-              <input type="text" class="form-control card-title" id="taskTitle" placeholder="Task title">
-            </div>
-            <div class="form-group">
-              <label for="taskDescription">Description</label>
-              <input type="text" class="form-control card-desctiprion" id="taskDescription" placeholder="Task description">
-            </div>
-          </form>
-          <div class="card-modal__footer d-flex justify-content-end position-static">
-            <button type="button" class="btn modal__btn-delete position-absolute" data-bs-dismiss="modal">delete</button>
-            <button type="button" class="btn modal__btn-cancel card-modal__btn" data-bs-dismiss="modal">cancel</button>
-            <button type="button" class="btn modal__btn-save card-modal__btn" data-bs-dismiss="modal">save</button>
-          </div>
-        </div>
-      </div>
+  </div>
+  <div class="container">
+    <div id="columnContainer" class="row justify-content-center">
     </div>
-
-    <!-- edit card modal -->
-    <div class="container">
-        <div id="columnContainer" class="row justify-content-center">
-            <!--col 01-->
-            
-            <div class="col-3 m-3 column rounded overflow-hidden position-relative">
-              <input type="text" class="column__header d-flex justify-content-center" placeholder="Column">
-              <button class="btn column__btn p-0 m-0 d-flex align-items-center justify-content-center rounded-circle position-absolute"
-              data-bs-toggle="modal" data-bs-target="#cardModal"><img class=""
-                      src="./Sources/CUSTOM_plusSign.png">
-              </button>
-              <button class="btn column__delete-btn p-0 m-0 d-flex align-items-center justify-content-center position-absolute">
-                  delete
-              </button>
-             
-
-              <div class="column__task-card p-2 d-flex flex-column rounded overflow-hidden" data-bs-toggle="modal" data-bs-target="#editCardModal">
-                  <h4 class="column__task-card__header">Task</h4>
-                  <p class="column__task-card__content">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  </p>
-              </div>
-            </div>
-            
-            <!--col 01 end-->
-            
-        </div>
-
-
-        <script src="./wip.js"></script>
+    <script src="./wip.js"></script>
 </body>
 
 </html>

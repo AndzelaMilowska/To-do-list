@@ -3,6 +3,7 @@ const serverCards = `https://todosy.iwanicki.wtf/api/v1/todo-item/`
 const columnsContainer = document.getElementById("columnContainer")
 const buttonNewColumn = document.getElementById("btn__add_column")
 const rootEl = document.querySelector(":root")
+const saveCardBtn = document.querySelector(".modal__btn-save")
 
 async function getColumnsObj() {
     const response = await fetch(serverColumns, {
@@ -11,6 +12,36 @@ async function getColumnsObj() {
     const columnsAll = await response.json()
     return columnsAll
 }
+
+//generate modal el 
+function generateModal() {
+    const modalContainer = document.querySelector(".modal-container")
+    modalContainer.innerHTML=""
+    const modalHTML = ` <div class="modal fade" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form class="card-form">
+          <div class="form-group py-3">
+            <label for="taskTitle">Title</label>
+            <input type="text" class="form-control card-title" id="taskTitle" placeholder="Task title">
+          </div>
+          <div class="form-group">
+            <label for="taskDescription">Description</label>
+            <input type="text" class="form-control card-description" id="taskDescription"
+              placeholder="Task description">
+          </div>
+        </form>
+        <div class="card-modal__footer d-flex justify-content-end">
+          <button type="button" class="btn modal__btn-delete position-absolute" data-bs-dismiss="modal">delete</button>
+          <button type="button" class="btn modal__btn-cancel card-modal__btn" data-bs-dismiss="modal">cancel</button>
+          <button type="button" class="btn modal__btn-save card-modal__btn" data-bs-dismiss="modal">save</button>
+        </div>
+      </div>
+    </div>
+   </div>`
+   modalContainer.insertAdjacentHTML('beforeend',`${modalHTML}`)
+}
+ 
 
 //generate columns html
 function generateColumnHTML(colIndex, colName, colID) {
@@ -30,10 +61,7 @@ function generateColumnHTML(colIndex, colName, colID) {
 //generate columns from server
 async function generateColumns() {
     columnsContainer.innerHTML = ""
-    // const columnsList = document.querySelectorAll(".column")
-    // columnsList.forEach(column => column.remove())
     const columnsObj = await getColumnsObj()
-    // console.log(columnsObj)
     columnsObj.map((column, index) => {
         generateColumnHTML(index, column.name, column.uuid);
     })
@@ -115,12 +143,17 @@ async function postNewColumn() {
 }
 
 async function rerenderPage() {
+    generateModal()
     await generateColumns();
-    await generateCards();
+    await generateCards()
     lookForColumnNameChange();
-    deleteColumnBtn()
     addTaskBtnUse()
+    deleteColumnBtn()
     editTaskCard()
+    dragstart()
+    dropHandler()
+    dragoverHandler() 
+    dragendHandler()
 }
 
 function lookForAddColBtnUse() {
@@ -130,7 +163,6 @@ function lookForAddColBtnUse() {
     })
 }
 
-//add new task card (request)
 async function saveCard(parentId) {
     const saveCardBtn = document.querySelector(".modal__btn-save")
     saveCardBtn.addEventListener('click', async () => {
@@ -154,8 +186,6 @@ function addTaskBtnUse() {
     const addCardBtn = document.querySelectorAll(".column__btn") 
     addCardBtn.forEach(button => button.addEventListener('click', () => {
         rootEl.style.setProperty('--display-del-btn', 'none');
-        //taskTitle & taskDescription should be avalible for both, addTaskBtnUse & saveCard functions
-        // cool if you could share them also with putCard & editTaskCard functions
         const taskTitle = document.querySelector(".card-title")
         const taskDescription = document.querySelector(".card-description")
         taskTitle.value = '';
@@ -166,7 +196,7 @@ function addTaskBtnUse() {
 }
 
 // //update/ midify card 
-function putCard(cardId, colId) {
+function modifyCardContent(cardId, colId) {
     const saveCardBtn = document.querySelector(".modal__btn-save")
     saveCardBtn.addEventListener('click', async () => {
         const taskTitle = document.querySelector(".card-title")
@@ -184,6 +214,7 @@ function putCard(cardId, colId) {
         rerenderPage()
     })
 }
+
 async function deleteCard(cardId) {
     await fetch(serverCards+cardId, {
         method: "DELETE",
@@ -210,17 +241,18 @@ function editTaskCard() {
         taskDescription.value = card.childNodes[3].innerHTML
         const colId = card.parentNode.dataset.column;
         const cardId = card.dataset.cardId
-        putCard(cardId, colId)
-        //console.log(card.dataset.cardId)
+        modifyCardContent(cardId, colId)
     }))
 }
 
-// function dragevent(ev) {
-//     console.log("uh")
-//     console.log(ev)
-//     ev.dataTransfer.setData("text", ev.target.id);
-//     ev.dataTransfer.effectAllowed = "move";
-// }
+async function changeCardParent(cardId, colId) {
+        const modifiedCardData = new FormData()
+        modifiedCardData.append("TodoColumnUuid", colId)
+        await fetch(serverCards+cardId, {
+            method: "PUT",
+            body: modifiedCardData
+        })
+}
 
 function dragstart() {
     const cards = document.querySelectorAll(".draggable")
@@ -233,15 +265,21 @@ function dragstart() {
         })})
 }
 
+//put card
   function dropHandler() {
     const columns = document.querySelectorAll(".column")
     columns.forEach(column => {
         column.addEventListener("drop", (ev) => {
             ev.preventDefault();
             const data = ev.dataTransfer.getData("text");
-            const draggedEl = document.getElementById(data)
+            const dragedCard = document.getElementById(data)
             console.log(ev.target)
             ev.target.appendChild(document.getElementById(data))
+            const colId = ev.target.dataset.column;
+            console.log(colId)
+            const cardId = dragedCard.dataset.cardId
+            console.log(cardId)
+            changeCardParent(cardId, colId)
         });
     })
   }
@@ -252,8 +290,7 @@ function dragstart() {
         column.addEventListener("dragover", (ev) => {
             rootEl.style.setProperty('--pointer-events', 'none');
             ev.preventDefault();
-            console.log("over")
-        });
+        })
     })
   }
 
@@ -269,6 +306,7 @@ function dragstart() {
 
 //render Page
 async function renderPage() {
+    generateModal()
     await generateColumns();
     await generateCards()
     lookForColumnNameChange();

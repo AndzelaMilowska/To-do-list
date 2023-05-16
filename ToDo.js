@@ -1,18 +1,14 @@
-//serverColumns => serverColumnsPath
-//generateColumns => renderColumns
-//generateTaskHTML => generateCardsHTML
-// window.onload=function() {
 class ServerRequests {
-    serverColumns;
-    serverCards;
+    columnsPath;
+    cardsPath;
 
     constructor() {
-        this.serverColumns = `https://todosy.iwanicki.wtf/api/v1/todo-columns/`
-        this.serverCards = `https://todosy.iwanicki.wtf/api/v1/todo-item/`
+        this.columnsPath = `https://todosy.iwanicki.wtf/api/v1/todo-columns/`
+        this.cardsPath = `https://todosy.iwanicki.wtf/api/v1/todo-item/`
     }
 
     async getColumnsObj() {
-        const response = await fetch(this.serverColumns, {
+        const response = await fetch(this.columnsPath, {
             method: "GET"
         });
         const columnsAll = await response.json()
@@ -20,7 +16,7 @@ class ServerRequests {
     }
 
     async getCardsObj(colId) {
-        const response = await fetch(this.serverCards+colId, {
+        const response = await fetch(this.cardsPath + colId, {
             method: "GET"
         });
         const cardsAll = await response.json()
@@ -28,14 +24,14 @@ class ServerRequests {
     }
 
     async sendColumnName(name, uuid) {
-        await fetch(this.serverColumns+uuid, {
+        await fetch(this.columnsPath + uuid, {
             method: "PUT",
             body: name
         })
     }
 
     async deleteColumn(columnId) {
-        await fetch(this.serverColumns+columnId, {
+        await fetch(this.columnsPath + columnId, {
             method: "DELETE",
         })
     }
@@ -43,28 +39,28 @@ class ServerRequests {
     async postNewColumn() {
         const columnData = new FormData()
         columnData.append("name", "Column")
-        await fetch(this.serverColumns, {
+        await fetch(this.columnsPath, {
             method: "POST",
             body: columnData
         })
     }
 
     async postCard(parentId, cardData) {
-        await fetch(this.serverCards+parentId, {
+        await fetch(this.cardsPath + parentId, {
             method: "POST",
             body: cardData
         })
     }
 
     async putCard(modifiedCardData, cardId) {
-        await fetch(this.serverCards+cardId, {
+        await fetch(this.cardsPath + cardId, {
             method: "PUT",
             body: modifiedCardData
         })
     }
 
     async deleteCard(cardId) {
-        await fetch(this.serverCards+cardId, {
+        await fetch(this.cardsPath + cardId, {
             method: "DELETE",
         })
     }
@@ -102,8 +98,8 @@ class Modal {
     }
 
     generateModal() {
-        this.modalContainer.innerHTML="" 
-        this.modalContainer.insertAdjacentHTML('beforeend',`${this.modalHTML}`)
+        this.modalContainer.innerHTML = ""
+        this.modalContainer.insertAdjacentHTML('beforeend', `${this.modalHTML}`)
     }
 }
 
@@ -142,10 +138,7 @@ class ColumnsRendering {
 }
 
 class CardsRendering {
-    constructor() {
-
-    }
-    generateTaskHTML(columnId, name, desctiption, cardId) {
+    generateCardsHTML(columnId, name, desctiption, cardId) {
         columnId.insertAdjacentHTML('beforeend', `
         <div class="column__task-card column_content draggable p-2 d-flex flex-column rounded overflow-hidden" draggable="true" data-card-Id="${cardId}" data-bs-toggle="modal" data-bs-target="#cardModal">
             <h4 class="column__task-card__header column_content">${name}</h4>
@@ -159,36 +152,41 @@ class CardsRendering {
         await Promise.all(Array.from(columnsList).map(async (column) => {
             const cardsObj = await serverReqObj.getCardsObj(column.dataset.column)
             await Promise.all(Array.from(cardsObj).map((card) => {
-                this.generateTaskHTML(column, card.name, card.description, card.uuid);
+                this.generateCardsHTML(column, card.name, card.description, card.uuid);
             }))
         }))
     }
 }
 
 class ColumnsFunctionalities {
-    lookForColumnNameChange(serverRequests) {
-        const columnHeaders =  document.querySelectorAll(".column__header") 
+    constructor(serverRequests) {
+        this.serverRequests = serverRequests
+    }
+    
+    lookForColumnNameChange() {
+        const columnHeaders = document.querySelectorAll(".column__header")
         columnHeaders.forEach(header => header.addEventListener('focus', () => {
             header.addEventListener('focusout', () => {
                 const newColumnName = new FormData();
                 newColumnName.append("name", header.value)
-                serverRequests.sendColumnName(newColumnName, header.parentNode.dataset.column)
+                this.serverRequests.sendColumnName(newColumnName, header.parentNode.dataset.column)
             })
         }))
     }
 
-    deleteColumnBtn(serverRequests) {
+    deleteColumnBtn() {
         const deleteButtons = document.querySelectorAll(".column__delete-btn")
         deleteButtons.forEach(button => button.addEventListener('click', () => {
-            serverRequests.deleteColumn(button.parentNode.dataset.column)
+            this.serverRequests.deleteColumn(button.parentNode.dataset.column)
             button.parentNode.remove();
         }))
     }
 
-    lookForAddColBtnUse(renderingObj, serverRequests) {
+    lookForAddColBtnUse(renderingObj) {
         const buttonNewColumn = document.getElementById("btn__add_column")
         buttonNewColumn.addEventListener("click", async () => {
-            await serverRequests.postNewColumn()
+
+            await this.serverRequests.postNewColumn()
             renderingObj.rerenderPage(renderingObj)
         })
     }
@@ -200,37 +198,38 @@ class CardsFunctionalities {
     taskDescription;
     rootEl;
 
-    constructor() {
-    this.saveCardBtn = document.querySelector(".modal__btn-save")
-    this.taskTitle = document.querySelector(".card-title")
-    this.taskDescription = document.querySelector(".card-description")
-    this.rootEl = document.querySelector(":root")
+    constructor(serverRequests) {
+        this.serverRequests = serverRequests
+        this.saveCardBtn = document.querySelector(".modal__btn-save")
+        this.taskTitle = document.querySelector(".card-title")
+        this.taskDescription = document.querySelector(".card-description")
+        this.rootEl = document.querySelector(":root")
     }
 
-    async saveCard(parentId, renderingObj, serverRequests) {
+    async saveCard(parentId, renderingObj) {
         this.saveCardBtn.addEventListener('click', () => {
             const cardData = new FormData()
             cardData.append("name", this.taskTitle.value)
             cardData.append("description", this.taskDescription.value)
             this.taskTitle.value = '';
             this.taskDescription.value = '';
-            serverRequests.postCard(parentId, cardData)
+            this.serverRequests.postCard(parentId, cardData)
             renderingObj.rerenderPage(renderingObj)
         })
     }
 
-    addTaskBtnUse(renderingObj, serverRequests) {
-        const addCardBtn = document.querySelectorAll(".column__btn") 
+    addTaskBtnUse(renderingObj) {
+        const addCardBtn = document.querySelectorAll(".column__btn")
         addCardBtn.forEach(button => button.addEventListener('click', () => {
             this.rootEl.style.setProperty('--display-del-btn', 'none');
             this.taskTitle.value = '';
             this.taskDescription.value = '';
             const columnId = button.parentNode.dataset.column;
-            this.saveCard(columnId, renderingObj, serverRequests)
-            }))
+            this.saveCard(columnId, renderingObj)
+        }))
     }
 
-    modifyCardContent(cardId, colId, renderingObj, serverRequests) {
+    modifyCardContent(cardId, colId, renderingObj) {
         this.saveCardBtn.addEventListener('click', async () => {
             const modifiedCardData = new FormData()
             modifiedCardData.append("name", this.taskTitle.value)
@@ -238,69 +237,109 @@ class CardsFunctionalities {
             modifiedCardData.append("TodoColumnUuid", colId)
             this.taskTitle.value = '';
             this.taskDescription.value = '';
-            serverRequests.putCard(modifiedCardData, cardId)
+            this.serverRequests.putCard(modifiedCardData, cardId)
             renderingObj.rerenderPage(renderingObj)
         })
     }
 
-    deleteCardBtn(cardId, renderingObj, serverRequests) {
+    deleteCardBtn(cardId, renderingObj) {
         const deleteButton = document.querySelector(".modal__btn-delete")
         deleteButton.addEventListener('click', () => {
-            serverRequests.deleteCard(cardId)
+            this.serverRequests.deleteCard(cardId)
             renderingObj.rerenderPage(renderingObj)
         })
     }
 
-    editTaskCard(renderingObj, serverRequests) {
+    editTaskCard(renderingObj) {
         const taskCard = document.querySelectorAll(".column__task-card")
         taskCard.forEach(card => card.addEventListener('click', () => {
             this.rootEl.style.setProperty('--display-del-btn', 'block');
-            this.deleteCardBtn(card.dataset.cardId, renderingObj, serverRequests)
+            this.deleteCardBtn(card.dataset.cardId, renderingObj)
             this.taskTitle.value = card.childNodes[1].innerHTML
             this.taskDescription.value = card.childNodes[3].innerHTML
             const colId = card.parentNode.dataset.column;
             const cardId = card.dataset.cardId
-            this.modifyCardContent(cardId, colId, renderingObj, serverRequests)
+            this.modifyCardContent(cardId, colId, renderingObj)
         }))
+    }
+
+    returnRootEl() {
+        return this.rootEl
     }
 }
 
-// class Rendering {
-//     async rerenderPage() {
-//         generateModal()
-//         await generateColumns();
-//         await generateCards()
-//         lookForColumnNameChange();
-//         addTaskBtnUse()
-//         deleteColumnBtn()
-//         editTaskCard()
-//         dragstart()
-//         dropHandler()
-//         dragoverHandler() 
-//         dragendHandler()
-//     }
-// }
+class DragAndDrop {
+    serverRequests;
 
-// async function renderPage() {
-//     generateModal()
-//     await generateColumns();
-//     await generateCards()
-//     lookForColumnNameChange();
-//     lookForAddColBtnUse()
-//     addTaskBtnUse()
-//     deleteColumnBtn()
-//     editTaskCard()
-//     dragstart()
-//     dropHandler()
-//     dragoverHandler() 
-//     dragendHandler()
-// }
+    constructor(serverRequests, columnsList, rootEl) {
+        this.serverRequests = serverRequests
+        this.cards = document.querySelectorAll(".draggable")
+        this.columns = columnsList
+        this.rootEl = rootEl
+    }
 
+    async changeCardParent(cardId, colId) {
+        const modifiedCardData = new FormData()
+        modifiedCardData.append("TodoColumnUuid", colId)
+        this.serverRequests.putCard(modifiedCardData, cardId)
+    }
+
+    dragStart() {
+        this.cards.forEach(card => {
+            card.addEventListener("dragstart", (ev) => {
+                card.id = "indrag";
+                this.rootEl.style.setProperty('--draged-border', 'dashed white');
+                ev.dataTransfer.setData("text", ev.target.id);
+                ev.dataTransfer.effectAllowed = "move";
+            })
+        })
+    }
+
+    dropHandler() {
+        this.columns.forEach(column => {
+            column.addEventListener("drop", (ev) => {
+                ev.preventDefault();
+                const data = ev.dataTransfer.getData("text");
+                const dragedCard = document.getElementById(data)
+                ev.target.appendChild(document.getElementById(data))
+                const colId = ev.target.dataset.column;
+                const cardId = dragedCard.dataset.cardId
+                this.changeCardParent(cardId, colId)
+            })
+        })
+      }
+
+      dragoverHandler() {
+        this.columns.forEach(column => {
+            column.addEventListener("dragover", (ev) => {
+                this.rootEl.style.setProperty('--pointer-events', 'none');
+                ev.preventDefault();
+            })
+        })
+      }
+
+      dragendHandler() {
+       this.cards.forEach(card => { 
+            card.addEventListener("dragend", () => {
+                card.id = "";
+                this.rootEl.style.setProperty('--draged-border', 'none');
+                this.rootEl.style.setProperty('--pointer-events', 'all');
+            })}) 
+      }
+
+      runDragAndDrop() {
+        this.dragStart()
+        this.dropHandler()
+        this.dragoverHandler() 
+        this.dragendHandler()
+      }
+}
 
 class Rendering {
     constructor() {
-        this.columnsDynamics = new ColumnsFunctionalities()
         this.serverRequests = new ServerRequests()
+        this.columnsDynamics = new ColumnsFunctionalities(this.serverRequests)
+
     }
     async rerenderPage(renderingObj) {
         const modal = new Modal()
@@ -309,45 +348,24 @@ class Rendering {
         await columns.generateColumns(this.serverRequests)
         const cards = new CardsRendering()
         await cards.generateCards(columns.returnColumns(), this.serverRequests)
-        this.columnsDynamics.lookForColumnNameChange(this.serverRequests)
-        const cardsDynamics = new CardsFunctionalities()
-        cardsDynamics.addTaskBtnUse(renderingObj, this.serverRequests)
-        this.columnsDynamics.deleteColumnBtn(this.serverRequests)
-        cardsDynamics.editTaskCard(renderingObj, this.serverRequests)
+        this.columnsDynamics.lookForColumnNameChange()
+        const cardsDynamics = new CardsFunctionalities(this.serverRequests)
+        cardsDynamics.addTaskBtnUse(renderingObj)
+        this.columnsDynamics.deleteColumnBtn()
+        cardsDynamics.editTaskCard(renderingObj)
+        const dragAndDrop = new DragAndDrop(this.serverRequests, columns.returnColumns(), cardsDynamics.returnRootEl())
+        dragAndDrop.runDragAndDrop()
     }
 
     async renderPage(renderingObj) {
         this.rerenderPage(renderingObj)
-        this.columnsDynamics.lookForAddColBtnUse(renderingObj, this.serverRequests)
+        this.columnsDynamics.lookForAddColBtnUse(renderingObj)
     }
 }
 
-// class Rendering {
-//     constructor() {
-//         this.modal = new Modal()
-//         this.serverRequests = new ServerRequests()
-//         this.columns = new ColumnsRendering()
-//         this.cards = new CardsRendering()
-//         this.columnsDynamics = new ColumnsFunctionalities()
-//         this.cardsDynamics = new CardsFunctionalities()
-//     }
-
-//     async rerenderPage(renderingObj) {
-//         this.modal.generateModal()
-//         await this.columns.generateColumns(this.serverRequests)
-//         await this.cards.generateCards(this.columns.returnColumns(), this.serverRequests)
-//         this.columnsDynamics.lookForColumnNameChange(this.serverRequests) 
-//         this.cardsDynamics.addTaskBtnUse(renderingObj, this.serverRequests)
-//         this.columnsDynamics.deleteColumnBtn(this.serverRequests)
-//     }
-
-//     async renderPage(renderingObj) {
-//         console.log(this.columnsDynamics)
-//         console.log(this.serverRequests)
-//         this.rerenderPage(renderingObj)
-//         this.columnsDynamics.lookForAddColBtnUse(renderingObj, this.serverRequests)
-//     }
-// }
-
 const renderObj = new Rendering()
 renderObj.renderPage(renderObj)
+
+//declaration fields -> co ja tam w ogóle mam wpisać
+//rootEl jest w 2 klasach :< 
+//extends klasy ???

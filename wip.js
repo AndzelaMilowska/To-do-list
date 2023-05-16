@@ -105,7 +105,7 @@ async function sendColumnName(name, uuid) {
         body: name
     })
 }
-
+//////////////////////////////////////////////////////////////////////////////////////////
 // look for column name change
 function lookForColumnNameChange() {
     const columnHeaders =  document.querySelectorAll(".column__header") 

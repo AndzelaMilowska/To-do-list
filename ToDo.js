@@ -62,6 +62,13 @@ class ServerRequests {
             body: modifiedCardData
         })
     }
+
+    async deleteCard(cardId) {
+        await fetch(this.serverCards+cardId, {
+            method: "DELETE",
+        })
+    }
+
 }
 
 class Modal {
@@ -223,7 +230,7 @@ class CardsFunctionalities {
             }))
     }
 
-    modifyCardContent(cardId, colId, renderingObj) {
+    modifyCardContent(cardId, colId, renderingObj, serverRequests) {
         this.saveCardBtn.addEventListener('click', async () => {
             const modifiedCardData = new FormData()
             modifiedCardData.append("name", this.taskTitle.value)
@@ -231,9 +238,30 @@ class CardsFunctionalities {
             modifiedCardData.append("TodoColumnUuid", colId)
             this.taskTitle.value = '';
             this.taskDescription.value = '';
-            putCard(modifiedCardData, cardId)
+            serverRequests.putCard(modifiedCardData, cardId)
             renderingObj.rerenderPage(renderingObj)
         })
+    }
+
+    deleteCardBtn(cardId, renderingObj, serverRequests) {
+        const deleteButton = document.querySelector(".modal__btn-delete")
+        deleteButton.addEventListener('click', () => {
+            serverRequests.deleteCard(cardId)
+            renderingObj.rerenderPage(renderingObj)
+        })
+    }
+
+    editTaskCard(renderingObj, serverRequests) {
+        const taskCard = document.querySelectorAll(".column__task-card")
+        taskCard.forEach(card => card.addEventListener('click', () => {
+            this.rootEl.style.setProperty('--display-del-btn', 'block');
+            this.deleteCardBtn(card.dataset.cardId, renderingObj, serverRequests)
+            this.taskTitle.value = card.childNodes[1].innerHTML
+            this.taskDescription.value = card.childNodes[3].innerHTML
+            const colId = card.parentNode.dataset.column;
+            const cardId = card.dataset.cardId
+            this.modifyCardContent(cardId, colId, renderingObj, serverRequests)
+        }))
     }
 }
 
@@ -285,6 +313,7 @@ class Rendering {
         const cardsDynamics = new CardsFunctionalities()
         cardsDynamics.addTaskBtnUse(renderingObj, this.serverRequests)
         this.columnsDynamics.deleteColumnBtn(this.serverRequests)
+        cardsDynamics.editTaskCard(renderingObj, this.serverRequests)
     }
 
     async renderPage(renderingObj) {

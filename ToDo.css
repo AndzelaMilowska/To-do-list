@@ -1,30 +1,27 @@
+
 :root {
     --white-a1: rgba(255, 255, 255);
     --white-a075: rgba(255, 255, 255, 0.75);
     --white-a05: rgba(255, 255, 255, 0.5);
     --white-a025: rgba(255, 255, 255, 0.25);
-    --grey-primary: rgb(141, 141, 141);
-    --grey-secondary: rgb(59, 59, 59);
-    --grey-tertiary: rgb(170, 170, 170);
-    --black-a05: rgba(0, 0, 0, 0.5);
-    
-
-    --background-color:  #d5cdca;
-    --background-color-secondary: #d5cdca; 
-    --shadow-color: #d5cdca;
-
-
-
-    --column-secondary-color: #033F42;
-    --column-tertiary-color: #80A8AB;
-    --column-primary-color: #3C7376;
+    --red-primary: rgb(193, 77, 77);
+    --light-beige: rgb(213, 205, 202);
+    --green-primary: rgb(60, 115, 118);
+    --green-secondary: rgb(128, 168, 171);
+    --main-background-color: var(--light-beige);
+    --shadow-color: var(--light-beige);
+    --display-del-btn: block;
+    --pointer-events: auto;
+    --draged-border: none;
+    --column-background-color: var(--white-a1);
+    --page-primary-color: var(--green-primary);
+    --page-secondary-color: var( --green-secondary);
     --text-primary-color:  var(--white-a1);
-    --column-primary: var(--white-a1);
 }
 
 body {
-    background-color: var(--background-color);
-    color: rgba(255, 255, 255, 0.448);
+    background-color: var(--main-background-color);
+    color: var(--white-a05);
     font-family: 'Yanone Kaffeesatz', sans-serif;
 }
 
@@ -50,13 +47,15 @@ body {
 
 .column {
     box-shadow: 0px 3px 5px var(--shadow-color) ;
-    background-color: var(--column-primary)
+    background-color: var(--column-background-color);
+    padding: 0;
+    padding-bottom: 1rem;
 }
 
 .column__header {
     margin-bottom: 1.5rem;
     color: var(--text-primary-color);
-    background-color: var(--column-primary-color);
+    background-color: var(--page-primary-color);
     width: 100%;
     height: 2.75rem;
     border: none;
@@ -69,11 +68,15 @@ body {
     text-decoration: underline dotted;
 }
 
+.column__header::placeholder {
+    color: var(--white-a1);
+}
+
 .column__task-card {
     margin: 1rem 0.5rem;
     color: var(--text-primary-color);
     padding-left: 0.5rem;
-    background-color: var(--column-primary-color);
+    background-color: var(--page-primary-color);
 }
 
 .column__btn {
@@ -98,3 +101,59 @@ body {
     background-color: var(--white-a05);
 }
 
+.column__delete-btn {
+    border: none;
+    color: var(--page-primary-color);
+    font-size: 0.75rem;
+    bottom: -0rem; right: 0.75rem;
+}
+
+.column__delete-btn:hover {
+    color: var(--page-secondary-color);
+}
+
+.modal__btn-cancel {
+    border: 0.1rem solid var(--main-background-color);
+    color: var(--page-primary-color);
+    margin: 1rem 0;
+}
+
+.modal__btn-save {
+    background-color: var(--page-primary-color);
+    color: var(--white-a1);
+    margin: 1rem;
+}
+
+.modal__btn-delete {
+    border: 0.1rem solid var(--red-primary);
+    color: var(--red-primary);
+    background-color: var(--white-a1);
+    margin: 1rem 0;
+    left: 1.5rem;
+    display: var(--display-del-btn);
+}
+
+.card-form {
+    padding: 1rem;
+    color: var(--page-primary-color);
+    font-size: 1.5rem;
+}
+
+.card-modal__btn:hover {
+background-color: var(--page-secondary-color);
+color: var(--white-a1);
+border: 0.1rem solid var(--page-primary-color);
+}
+
+.modal__btn-delete:hover {
+    color: var(--white-a1);
+    background-color: var(--red-primary);
+}
+
+.column_content {
+    pointer-events: var(--pointer-events);
+}
+
+#indrag {
+border: var(--draged-border);
+}

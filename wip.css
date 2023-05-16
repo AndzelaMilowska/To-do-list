@@ -26,6 +26,8 @@
     --column-primary: var(--white-a1);
 }
 
+
+
 body {
     background-color: var(--background-color);
     color: rgba(255, 255, 255, 0.448);

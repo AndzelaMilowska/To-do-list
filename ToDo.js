@@ -162,7 +162,7 @@ class ColumnsFunctionalities {
     constructor(serverRequests) {
         this.serverRequests = serverRequests
     }
-    
+
     lookForColumnNameChange() {
         const columnHeaders = document.querySelectorAll(".column__header")
         columnHeaders.forEach(header => header.addEventListener('focus', () => {
@@ -197,6 +197,7 @@ class CardsFunctionalities {
     taskTitle;
     taskDescription;
     rootEl;
+    serverRequests;
 
     constructor(serverRequests) {
         this.serverRequests = serverRequests
@@ -214,7 +215,7 @@ class CardsFunctionalities {
             this.taskTitle.value = '';
             this.taskDescription.value = '';
             this.serverRequests.postCard(parentId, cardData)
-            renderingObj.rerenderPage(renderingObj)
+            renderingObj.rerenderPage(renderingObj)  
         })
     }
 
@@ -270,6 +271,9 @@ class CardsFunctionalities {
 
 class DragAndDrop {
     serverRequests;
+    cards;
+    columns;
+    rootEl;
 
     constructor(serverRequests, columnsList, rootEl) {
         this.serverRequests = serverRequests
@@ -307,35 +311,39 @@ class DragAndDrop {
                 this.changeCardParent(cardId, colId)
             })
         })
-      }
+    }
 
-      dragoverHandler() {
+    dragoverHandler() {
         this.columns.forEach(column => {
             column.addEventListener("dragover", (ev) => {
                 this.rootEl.style.setProperty('--pointer-events', 'none');
                 ev.preventDefault();
             })
         })
-      }
+    }
 
-      dragendHandler() {
-       this.cards.forEach(card => { 
+    dragendHandler() {
+        this.cards.forEach(card => {
             card.addEventListener("dragend", () => {
                 card.id = "";
                 this.rootEl.style.setProperty('--draged-border', 'none');
                 this.rootEl.style.setProperty('--pointer-events', 'all');
-            })}) 
-      }
+            })
+        })
+    }
 
-      runDragAndDrop() {
+    runDragAndDrop() {
         this.dragStart()
         this.dropHandler()
-        this.dragoverHandler() 
+        this.dragoverHandler()
         this.dragendHandler()
-      }
+    }
 }
 
 class Rendering {
+    serverRequests;
+    columnsDynamics;
+
     constructor() {
         this.serverRequests = new ServerRequests()
         this.columnsDynamics = new ColumnsFunctionalities(this.serverRequests)
@@ -366,6 +374,3 @@ class Rendering {
 const renderObj = new Rendering()
 renderObj.renderPage(renderObj)
 
-//declaration fields -> co ja tam w ogóle mam wpisać
-//rootEl jest w 2 klasach :< 
-//extends klasy ???

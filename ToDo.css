@@ -1,0 +1,159 @@
+
+:root {
+    --white-a1: rgba(255, 255, 255);
+    --white-a075: rgba(255, 255, 255, 0.75);
+    --white-a05: rgba(255, 255, 255, 0.5);
+    --white-a025: rgba(255, 255, 255, 0.25);
+    --red-primary: rgb(193, 77, 77);
+    --light-beige: rgb(213, 205, 202);
+    --green-primary: rgb(60, 115, 118);
+    --green-secondary: rgb(128, 168, 171);
+    --main-background-color: var(--light-beige);
+    --shadow-color: var(--light-beige);
+    --display-del-btn: block;
+    --pointer-events: auto;
+    --draged-border: none;
+    --column-background-color: var(--white-a1);
+    --page-primary-color: var(--green-primary);
+    --page-secondary-color: var( --green-secondary);
+    --text-primary-color:  var(--white-a1);
+}
+
+body {
+    background-color: var(--main-background-color);
+    color: var(--white-a05);
+    font-family: 'Yanone Kaffeesatz', sans-serif;
+}
+
+.navbar__btn {
+    border: 0.1rem solid var(--white-a075);
+    color: var(--white-a075);
+    background-color: var(--white-a025);
+    font-size: 1.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.navbar__btn img {
+    max-width: 50%;
+    max-height: 50%;
+}
+
+.navbar__btn:hover {
+    color: var(--white-a1);
+    border-color: var(--white-a1);
+    background-color: var(--white-a05);
+}
+
+.column {
+    box-shadow: 0px 3px 5px var(--shadow-color) ;
+    background-color: var(--column-background-color);
+    padding: 0;
+    padding-bottom: 1rem;
+}
+
+.column__header {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary-color);
+    background-color: var(--page-primary-color);
+    width: 100%;
+    height: 2.75rem;
+    border: none;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.column__header:focus {
+    outline: none;
+    text-decoration: underline dotted;
+}
+
+.column__header::placeholder {
+    color: var(--white-a1);
+}
+
+.column__task-card {
+    margin: 1rem 0.5rem;
+    color: var(--text-primary-color);
+    padding-left: 0.5rem;
+    background-color: var(--page-primary-color);
+}
+
+.column__btn {
+    border: 0.1rem solid var(--white-a075);
+    color: var(--white-a075);
+    background-color: var(--white-a025);
+    font-size: 1.5rem;
+    width: 2rem;
+    height: 2rem;
+    top: 0.3rem; right: 1rem;
+
+}
+
+.column__btn img {
+    max-width: 50%;
+    max-height: 50%;
+}
+
+.column__btn:hover {
+    color: var(--white-a1);
+    border-color: var(--white-a1);
+    background-color: var(--white-a05);
+}
+
+.column__delete-btn {
+    border: none;
+    color: var(--page-primary-color);
+    font-size: 0.75rem;
+    bottom: -0rem; right: 0.75rem;
+}
+
+.column__delete-btn:hover {
+    color: var(--page-secondary-color);
+}
+
+.modal__btn-cancel {
+    border: 0.1rem solid var(--main-background-color);
+    color: var(--page-primary-color);
+    margin: 1rem 0;
+}
+
+.modal__btn-save {
+    background-color: var(--page-primary-color);
+    color: var(--white-a1);
+    margin: 1rem;
+}
+
+.modal__btn-delete {
+    border: 0.1rem solid var(--red-primary);
+    color: var(--red-primary);
+    background-color: var(--white-a1);
+    margin: 1rem 0;
+    left: 1.5rem;
+    display: var(--display-del-btn);
+}
+
+.card-form {
+    padding: 1rem;
+    color: var(--page-primary-color);
+    font-size: 1.5rem;
+}
+
+.card-modal__btn:hover {
+background-color: var(--page-secondary-color);
+color: var(--white-a1);
+border: 0.1rem solid var(--page-primary-color);
+}
+
+.modal__btn-delete:hover {
+    color: var(--white-a1);
+    background-color: var(--red-primary);
+}
+
+.column_content {
+    pointer-events: var(--pointer-events);
+}
+
+#indrag {
+border: var(--draged-border);
+}
